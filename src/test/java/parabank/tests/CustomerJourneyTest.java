@@ -13,15 +13,17 @@ import parabank.usecases.CustomerRegistration;
 @Tag("e2e")
 @ExtendWith(BrowserSession.class)
 class CustomerJourneyTest {
-    @ParameterizedTest(name = "{0}")
-    @MethodSource("parabank.config.ScenarioData#customerJourneys")
-    void registeredCustomerCanAccessTheirAccounts(
-            Customer customer, CustomerRegistration registration,
-            CustomerAccess access, CustomerAccounts accounts) {
-        registration.register(customer);
-        access.logout();
-        access.login(customer.credentials());
-        accounts.verifyOverviewFor(customer);
-        access.logout();
-    }
+  @ParameterizedTest(name = "{0}")
+  @MethodSource("parabank.config.ScenarioData#customerJourneys")
+  void registeredCustomerCanAccessTheirAccounts(
+      Customer customer,
+      CustomerRegistration registration,
+      CustomerAccess access,
+      CustomerAccounts accounts) {
+    registration.register(customer);
+    access.logout();
+    access.login(customer.credentials());
+    accounts.verifyOverviewFor(customer);
+    access.logout();
+  }
 }

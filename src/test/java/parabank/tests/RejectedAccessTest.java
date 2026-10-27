@@ -11,9 +11,9 @@ import parabank.usecases.CustomerAccess;
 @Tag("e2e")
 @ExtendWith(BrowserSession.class)
 class RejectedAccessTest {
-    @ParameterizedTest(name = "{0}")
-    @MethodSource("parabank.config.ScenarioData#rejectedAccess")
-    void incompleteCredentialsAreRejected(RejectedAccess scenario, CustomerAccess access) {
-        access.reject(scenario);
-    }
+  @ParameterizedTest(name = "{0}")
+  @MethodSource("parabank.config.ScenarioData#rejectedAccess")
+  void incompleteCredentialsAreRejected(RejectedAccess scenario, CustomerAccess access) {
+    access.reject(scenario);
+  }
 }
