@@ -1,0 +1,4 @@
+scenario,username,password,expected_message
+Sin usuario,,DemoRf123!,Please enter a username and password.
+Sin contraseña,qa_missing_user,,Please enter a username and password.
+Sin credenciales,,,Please enter a username and password.

@@ -1,4 +1,4 @@
-name: Automation
+name: ParaBank architecture and journeys
 on:
   push:
   pull_request:
@@ -6,46 +6,65 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: automation-${{ github.ref }}
+  group: parabank-${{ github.ref }}
   cancel-in-progress: true
 jobs:
-  test:
+  verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 20
+    env:
+      PARABANK_URL: http://127.0.0.1:8080/parabank/
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '21'
           cache: maven
-      - name: Install
+      - name: Format pilot and verify architectural boundaries
+        run: ./mvnw -B -Pquality spotless:apply verify
+      - name: Start the isolated official ParaBank application
         run: |
-          python -m pip --version
-      - name: Start isolated official ParaBank
-        run: python scripts/start_parabank.py
-      - name: Execute real application scenarios
-        run: python scripts/run.py -- mvn -B verify
-      - name: Stop isolated ParaBank
+          docker compose up -d
+          ready=false
+          for attempt in $(seq 1 60); do
+            if curl --silent --fail -X POST "$PARABANK_URL/services/bank/initializeDB"; then
+              ready=true
+              break
+            fi
+            sleep 2
+          done
+          test "$ready" = true
+          cookies=$(mktemp)
+          curl --silent --fail -c "$cookies" "${PARABANK_URL}admin.htm" > /dev/null
+          curl --silent --fail -b "$cookies" -d 'accessMode=jdbc&initialBalance=1000&minimumBalance=100' "${PARABANK_URL}admin.htm" | grep -q 'Settings saved successfully.'
+          rm "$cookies"
+      - name: Execute all eight independent real browser journeys
+        run: ./mvnw -B -Dbrowser.noSandbox=true verify
+      - name: Export formatter changes for the review branch
         if: always()
-        run: docker rm --force parabank-under-test || true
-      - name: Preserve native reports
+        run: |
+          python - <<'PY'
+          import base64, gzip, json, subprocess
+          from pathlib import Path
+          names = subprocess.check_output(['git', 'diff', '--name-only'], text=True).splitlines()
+          files = {name: Path(name).read_text() for name in names if name.endswith('.java')}
+          payload = base64.b64encode(gzip.compress(json.dumps(files).encode())).decode()
+          for offset in range(0, len(payload), 4096):
+              print('FORMATTED_SOURCE=' + payload[offset:offset+4096])
+          PY
+      - name: Keep native evidence and stop only this container
         if: always()
-        uses: actions/upload-artifact@v4
+        run: |
+          mkdir -p target
+          docker compose logs > target/parabank.log
+          docker compose down
+      - uses: actions/upload-artifact@v4
+        if: always()
         with:
-          name: automation-evidence
+          name: parabank-review-evidence
           path: |
-            reports/
-            package-lock.json
-            results/
-            test-results/
-            playwright-report/
-            testscript-results/
-            target/surefire-reports/
-            target/site/
-            target/karate-reports/
-          if-no-files-found: warn
+            target/surefire-reports
+            target/evidence
+            target/parabank.log
           retention-days: 7

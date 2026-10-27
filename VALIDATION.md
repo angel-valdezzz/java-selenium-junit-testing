@@ -1,7 +1,7 @@
 # Validation status
 
-The real application integration suite passed in GitHub Actions:
-[verified run](https://github.com/angel-valdezzz/java-selenium-junit-testing/actions/runs/40250345431).
-The workflow installs dependencies and starts the actual application dependencies.
-Web CI uses the pinned official ParaBank container; HTTP CI uses Demo Users API.
-This records that run's outcome; subsequent commits must pass their own checks.
+Architectural correction pilot, under review in this branch.
+Earlier passing runs describe the previous implementation and do not establish acceptance of this design.
+
+Required checks: Maven Wrapper; format; layer restrictions; eight real ParaBank journeys;
+failure evidence and isolated browser cleanup. The PR checks record the actual results.

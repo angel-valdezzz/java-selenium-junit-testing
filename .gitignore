@@ -1,11 +1,4 @@
-.venv/
-__pycache__/
-.pytest_cache/
-node_modules/
-reports/
-results/
 target/
-test-results/
-playwright-report/
-testscript-results/
+.idea/
+*.iml
 .env

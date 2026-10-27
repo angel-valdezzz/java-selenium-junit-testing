@@ -1,33 +1,41 @@
-# java-selenium-junit-testing
+# Java · Selenium · JUnit — ParaBank
 
-**Java + Selenium + Junit** - ParaBank.
+[Español](README.es.md)
 
-[English](README.md) � [Espa�ol](README.es.md)
+Independent browser automation following the established
+[Robot/SeleniumLibrary architecture](https://github.com/angel-valdezzz/robotframework-selenium-testing/blob/main/docs/architecture.md):
+**business scenarios → use cases → declarative page locators**, with configuration and tabular data kept separate.
 
-Independent automation example. Each repository owns its tests, dependencies and CI.
+## Install and run
 
-## Setup
+JDK 17+ (CI: JDK 21), Chrome and network access for Maven/Selenium Manager.
+Maven Wrapper pins and checks the Maven distribution; no Python launcher is required.
 
-Python 3.12 is used by the launcher and local API. Node projects use Node 22; Java projects use JDK 21 and Maven 3.9+.
-
-```sh
-python -m pip --version
+```powershell
+.\mvnw.cmd -B verify
+.\mvnw.cmd -B -Pquality spotless:check verify
+.\mvnw.cmd -B -Dparabank.url=http://127.0.0.1:8080/parabank/ verify
 ```
 
-## Run
+Linux/macOS: use `./mvnw` for the same commands.
+Public ParaBank is the default: https://parabank.parasoft.com/parabank/.
+For visible Chrome add `-Dbrowser.headless=false`. Timeout: `-Dbrowser.timeout=25`.
+Formatting: `./mvnw spotless:apply`.
 
-```sh
-python scripts/run.py -- mvn -B verify
-```
+## Structure
 
-For an external API, set DEMO_BASE_URL and DEMO_API_KEY and omit --local-api. PARABANK_URL overrides the public UI URL. Environment variables must be set in your shell; .env files are not loaded automatically.
+- `src/test/java/parabank/tests`: complete business journeys.
+- `usecases`: customer registration, access, accounts and banking.
+- `pages`: locators only; no browser or business operations.
+- `config`: per-case browser lifecycle, dependency composition and CSV loading.
+- `data` package: typed inputs; `data/tables`: explicit scenario inputs and expected results.
+- `architecture`: executable layer restrictions.
 
-UI CI uses an isolated official ParaBank Docker container with JDBC and records its image digest. It never changes settings on the public instance. Local runs use the public URL unless you override PARABANK_URL.
+Eight E2E cases cover registration, identity/account access, rejected incomplete credentials,
+savings and transfers with exact balance changes and visible movements.
+Fresh browser and unique fictional customer data per case. The source CSV is never rewritten.
+JUnit results: `target/surefire-reports`; failure screenshots: `target/evidence`.
 
-## Structure and reports
-
-Tests describe business scenarios; pages/helpers encapsulate browser and HTTP interactions. scripts/run.py manages the real local API and redacts its ephemeral key from console and text reports. Native reports are retained by Actions even when tests fail.
-
-Read [scenarios](docs/scenarios.md), [validation status](VALIDATION.md) and [CI](.github/workflows/ci.yml).
-
-The public ParaBank instance can fail independently of the tests. No production service or credentials are used. Do not commit credentials or enable API request traces containing authentication headers.
+See [architecture](docs/architecture.md), [scenario matrix](docs/scenarios.md)
+and [validation status](VALIDATION.md). Native test runners and Maven own execution.
+No claim of architectural acceptance is inferred merely from an earlier green CI run.

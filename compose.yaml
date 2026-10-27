@@ -1,0 +1,5 @@
+services:
+  parabank:
+    image: parasoft/parabank@sha256:4a122c72f653edb979b1b84d98c5c7e938b43f22f9e46d8e041de759390982a4
+    ports:
+      - "127.0.0.1:8080:8080"

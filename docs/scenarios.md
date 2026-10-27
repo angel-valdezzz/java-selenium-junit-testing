@@ -1,21 +1,16 @@
-# Application contracts
+# Recorridos y trazabilidad
 
-UI: ParaBank. Every positive case registers a unique fictional customer.
-Never use john/demo, fixed account IDs, implicit test ordering, or real customer data.
-UI cases cover registration, logout/login, required fields, password mismatch,
-invalid credentials, and opening a savings account when supported by the suite.
+| Escenario | Datos | Operaciones y resultado |
+| --- | --- | --- |
+| Cliente de México | customers.csv, primera fila | Registro, cierre, acceso, identidad/cuentas y cierre |
+| Cliente de Estados Unidos | customers.csv, segunda fila | Mismo negocio, con otra fila |
+| Usuario vacío | access_cases.csv | Rechazo exacto y formulario de acceso disponible |
+| Contraseña vacía | access_cases.csv | Rechazo exacto y formulario de acceso disponible |
+| Ambos vacíos | access_cases.csv | Rechazo exacto y formulario de acceso disponible |
+| Registro/cierre | Cliente nuevo | Confirmación de registro y vuelta al formulario |
+| Ahorro | Cliente nuevo | Cuenta distinta, tipo SAVINGS y saldo no negativo |
+| Transferencia | transfers.csv, 10.00 | Confirmación, débito/crédito exactos y movimientos en ambas cuentas |
 
-API: the separate Demo Users API, pinned by commit in requirements-service.txt.
-Authenticated requests use X-API-Key. POST/PUT require name and email.
-Roles: admin/support/sales. PATCH null is rejected (422); duplicate email is 409.
-Missing/invalid credentials return 401. DELETE returns 204, subsequent GET is 404.
-Each API test creates unique users and removes them in cleanup where the runner
-supports finally/fixture teardown. Local CI starts a fresh real service.
-
-CI starts the official ParaBank Docker image in an isolated loopback container,
-configures JDBC there, and records the resolved image digest in reports.
-Local runs default to the shared public instance; PARABANK_URL overrides it.
-An application outage is a failing dependency, never a skip or successful test.
-Automatic test retries are disabled. Use fresh data on reruns.
-Suite source is the authoritative scenario inventory; feature parity differs for
-experimental TestScript and is documented in its README.
+No se omiten escenarios al fallar ParaBank. No se utilizan cuentas compartidas ni identificadores fijos.
+La ejecución pública no modifica administración ni limpia la base de datos.
+El contenedor oficial es opcional; CI inicializa únicamente su propia instancia en loopback.
