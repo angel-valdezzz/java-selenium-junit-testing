@@ -1,7 +1,12 @@
-# Validation status
+# Validation of the architectural correction pilot
 
-The real application integration suite passed in GitHub Actions:
-[verified run](https://github.com/angel-valdezzz/java-selenium-junit-testing/actions/runs/40250345431).
-The workflow installs dependencies and starts the actual application dependencies.
-Web CI uses the pinned official ParaBank container; HTTP CI uses Demo Users API.
-This records that run's outcome; subsequent commits must pass their own checks.
+[Recorded run](https://github.com/angel-valdezzz/java-selenium-junit-testing/actions/runs/40586952625):
+eight independent real ParaBank journeys and six architecture/data checks passed (14 tests total).
+The quality profile also passed separately. CI uses the verified Maven Wrapper and checks committed formatting.
+
+The eight journeys follow the Robot SeleniumLibrary reference, including exact debit/credit balances
+and visible movements after a transfer. Browser lifecycle and failure evidence belong to config,
+not the scenario classes. Pages expose declarative locators only.
+
+Subsequent commits have their own PR checks. Automated success is evidence of these checks;
+architectural acceptance and replication to other stacks remain under review.

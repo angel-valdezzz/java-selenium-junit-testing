@@ -1,0 +1,3 @@
+scenario,first_name,last_name,street,city,state,zip_code,phone,ssn,password
+Cliente de México,Ana,Pruebas,123 Demo Street,Mexico City,CDMX,01000,5550100101,111223333,DemoRf123!
+Cliente de Estados Unidos,Leo,Testing,456 Test Avenue,Austin,Texas,78701,5550100102,222334444,DemoRf456!
