@@ -88,7 +88,8 @@ public final class BrowserSession
           Path directory = Path.of("target", "evidence", java.util.UUID.randomUUID().toString());
           Files.createDirectories(directory);
           Files.writeString(
-              directory.resolve("case.txt"), context.getUniqueId() + "\n" + context.getDisplayName());
+              directory.resolve("case.txt"),
+              context.getUniqueId() + "\n" + context.getDisplayName());
           System.err.println("Failure evidence: " + directory);
           Files.write(
               directory.resolve("failure.png"),
