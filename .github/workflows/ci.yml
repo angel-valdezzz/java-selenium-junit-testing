@@ -21,8 +21,8 @@ jobs:
           distribution: temurin
           java-version: '21'
           cache: maven
-      - name: Format pilot and verify architectural boundaries
-        run: ./mvnw -B -Pquality spotless:apply verify
+      - name: Verify formatting and architectural boundaries
+        run: ./mvnw -B -Pquality spotless:check verify
       - name: Start the isolated official ParaBank application
         run: |
           docker compose up -d
@@ -41,18 +41,6 @@ jobs:
           rm "$cookies"
       - name: Execute all eight independent real browser journeys
         run: ./mvnw -B -Dbrowser.noSandbox=true verify
-      - name: Export formatter changes for the review branch
-        if: always()
-        run: |
-          python - <<'PY'
-          import base64, gzip, json, subprocess
-          from pathlib import Path
-          names = subprocess.check_output(['git', 'diff', '--name-only'], text=True).splitlines()
-          files = {name: Path(name).read_text() for name in names if name.endswith('.java')}
-          payload = base64.b64encode(gzip.compress(json.dumps(files).encode())).decode()
-          for offset in range(0, len(payload), 4096):
-              print('FORMATTED_SOURCE=' + payload[offset:offset+4096])
-          PY
       - name: Keep native evidence and stop only this container
         if: always()
         run: |
