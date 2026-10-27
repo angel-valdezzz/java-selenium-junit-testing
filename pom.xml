@@ -9,6 +9,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <selenium.version>4.27.0</selenium.version>
         <junit.version>5.11.4</junit.version>
+        <excludedGroups></excludedGroups>
     </properties>
     <dependencies>
         <dependency>

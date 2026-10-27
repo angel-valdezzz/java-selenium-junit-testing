@@ -28,7 +28,7 @@ jobs:
           docker compose up -d
           ready=false
           for attempt in $(seq 1 60); do
-            if curl --silent --fail -X POST "$PARABANK_URL/services/bank/initializeDB"; then
+            if curl --silent --fail -X POST "${PARABANK_URL}services/bank/initializeDB"; then
               ready=true
               break
             fi
